@@ -8,7 +8,7 @@ def index(request, service):
     Service.objects.get_or_create(name=service)
     if Service.objects.filter(name=service).exists():
         if request.body:
-            message = json.loads(request.body)
+            message = json.loads(request.body.decode())
             user = message['user']
             text = message['text']
             OutcomeMessage.objects.create(user=user, text=text)
