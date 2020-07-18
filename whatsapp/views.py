@@ -11,7 +11,9 @@ def index(request, service):
             message = json.loads(request.body.decode())
             user = message['user']
             text = message['text']
-            OutcomeMessage.objects.create(user=user, text=text)
+            uuid = message['uuid']
+            if IncomeMessage.objects.filter(user=user, uuid=uuid).exists():
+                OutcomeMessage.objects.create(user=user, text=text)
             return HttpResponse(json.dumps({}))
         else:
             timeout = int(request.GET.get('timeout', 0) or 60)
@@ -24,7 +26,7 @@ def index(request, service):
                     if Service.objects.filter(name=message.text).exists():
                         UserService.objects.filter(user=message.user).delete()
                         UserService.objects.create(user=message.user, service=service)
-                        data = dict(user=message.user, text=message.text)
+                        data = dict(user=message.user, text=message.text, uuid=message.uuid)
                         return HttpResponse(json.dumps(data))
                     # the user is not binded to a service
                     elif UserService.objects.filter(user=message.user, service=service).first() is None:
@@ -37,7 +39,7 @@ def index(request, service):
                         OutcomeMessage.objects.create(user=message.user, text=text)
                     # forward the message to the client
                     else:
-                        data = dict(user=message.user, text=message.text)
+                        data = dict(user=message.user, text=message.text, uuid=message.uuid)
                         return HttpResponse(json.dumps(data))
                 timeout = timeout-3
                 time.sleep(3)

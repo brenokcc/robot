@@ -17,14 +17,15 @@ def request(host, url, data=None, timeout=None):
         conn.close()
 
 class Message():
-    def __init__(self, host, service, user, text):
+    def __init__(self, host, service, user, text, uuid):
         self.host = host
         self.service = service
         self.user = user
         self.text = text
+        self.uuid = uuid
 
     def repply(self, text):
-        request(self.host, self.service, dict(user=self.user, text=text))
+        request(self.host, self.service, dict(user=self.user, text=text, uuid=self.uuid))
 
     def __str__(self):
         return '{} {}'.format(self.user, self.text)
@@ -39,7 +40,7 @@ class Bot():
     def message(self):
         data = request(self.host, self.service)
         if 'user' in data:
-            return Message(host=self.host, service=self.service, user=data['user'], text=data['text'])
+            return Message(host=self.host, service=self.service, user=data['user'], text=data['text'], uuid=data['uuid'])
         else:
             return self.message
 
