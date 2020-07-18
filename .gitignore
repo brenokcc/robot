@@ -1,5 +1,5 @@
 *˜
-nodejs/session.json
+scripts/docker/whatsapp/session.json
 *.pyc
 .svn
 .DS_Store
